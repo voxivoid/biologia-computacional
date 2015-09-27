@@ -1,1 +1,3 @@
-__author__ = 'Patricia'
+# coding=utf-8
+
+print("Hello World")
