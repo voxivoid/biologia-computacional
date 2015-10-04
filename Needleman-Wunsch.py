@@ -114,19 +114,19 @@ def traceback(matrix, x, y, seq1, seq2):
     tb = currentItem.getTraceback()
     if(tb[0] == 1):
         #print "Diagonal"
-        s1 = matrix[0][y] + s1
-        s2 = matrix[x][0] + s2
-        traceback(matrix, x - 1, y - 1, s1, s2)
+        s1temp = matrix[0][y] + s1
+        s2temp = matrix[x][0] + s2
+        traceback(matrix, x - 1, y - 1, s1temp, s2temp)
     if(tb[1] == 1):
         #print "Cima"
-        s1 = "-" + s1
-        s2 = matrix[x][0] + s2
-        traceback(matrix, x - 1, y, s1, s2)
+        s1temp = "-" + s1
+        s2temp = matrix[x][0] + s2
+        traceback(matrix, x - 1, y, s1temp, s2temp)
     if(tb[2] == 1):
         #print "Esquerda"
-        s1 = matrix[0][y] + s1
-        s2 = "-" + s2
-        traceback(matrix, x, y - 1, s1, s2)
+        s1temp = matrix[0][y] + s1
+        s2temp = "-" + s2
+        traceback(matrix, x, y - 1, s1temp, s2temp)
 
 matrix = initMatrix("WPCIWWPC", "IIWPC", -5)
 matrix = needlemanWunsch(matrix, MatrixInfo.blosum50, -5)
