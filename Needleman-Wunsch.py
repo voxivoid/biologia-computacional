@@ -5,16 +5,16 @@ from Bio.SubsMat import MatrixInfo
 class Item:
     value = 0
     # items on traceback are represented by tuples eg. item matrix[1][1] is represented by the tuple (1,1)
-    traceback = []
+    traceback = [0,0,0]
     visited = False
 
     def __init__(self, value):
         self.value = value
-        self.traceback = []
+        self.traceback = [0,0,0]
 
     def __repr__(self):
-        #return "V: " + str(self.value) + " Tb: " +str(self.traceback)
-        return str(self.value)
+        return "V: " + str(self.value) + " Tb: " +str(self.traceback)
+        #return str(self.value)
 
     def addItemToTraceback(self, item):
         self.traceback.append(item)
@@ -40,13 +40,13 @@ def initMatrix(s1, s2, gapValue):
     for line in range(0, len(matrix) - 1):
         item = Item(gapValue * line)
         if (line > 0):
-            item.addItemToTraceback((line, 1))
+            item.setTraceback([0,1,0])
         matrix[line + 1][1] = item
 
     for column in range(0, len(matrix[0]) - 1):
         item = Item(gapValue * column)
         if (column > 0):
-            item.addItemToTraceback((1, column))
+            item.setTraceback([0,0,1])
         matrix[1][column + 1] = item
 
     # inserting strings in the matrix
@@ -81,61 +81,56 @@ def needlemanWunsch(matrix, scoringMatrix, gapValue):
                 s = scoringMatrix.get((matrix[line][0], matrix[0][column]))
             match = matrix[line - 1][column - 1].getValue() + s
 
-            traceback = []
+            traceback = [0, 0, 0]
             value = max([gapUp, gapLeft, match])
 
+            if (match == value):
+                traceback[0] = 1
+
             if (gapUp == value):
-                traceback = [(line - 1, column)]
+                traceback[1] = 1
 
             if (gapLeft == value):
-                traceback = [(line, column - 1)]
-
-            if (match == value):
-                traceback = [(line - 1, column - 1)]
+                traceback[2] = 1
 
             matrix[line][column] = Item(value)
             matrix[line][column].setTraceback(traceback)
-
-            # TODO adicionar o traceback
     return matrix
 
-def traceback(matrix):
-    currentLine = len(matrix) - 1
-    currentColumn = len(matrix[0]) - 1
-    currentItem = matrix[currentLine][currentColumn]
-    s1 = s2 = ""
-    while(currentItem.getTraceback()):
-        tracebackItemCoord = currentItem.getTraceback()[0]
-        if((tracebackItemCoord[0] == (currentLine - 1)) and (tracebackItemCoord[1] == (currentColumn - 1))):
-            #print "Diagonal"
-            s1 = matrix[0][currentColumn] + s1
-            s2 = matrix[currentLine][0] + s2
-            currentLine -= 1
-            currentColumn -= 1
-        elif(tracebackItemCoord[0] == (currentLine - 1)):
-            #print "Cima"
-            s1 = "-" + s1
-            s2 = matrix[currentLine][0] + s2
-            currentLine -= 1
-        elif(tracebackItemCoord[1] == (currentColumn - 1)):
-            #print "Esquerda"
-            s1 = matrix[0][currentColumn] + s1
-            s2 = "-" + s2
-            currentColumn -= 1
-        currentItem = matrix[currentLine][currentColumn]
+def traceback(matrix, x, y, seq1, seq2):
+    currentItem = matrix[x][y]
+    s1 = seq1
+    s2 = seq2
 
-    x = ""
-    for i in range(len(s1)):
-        x += "|"
-    print "Score: " + str(matrix[len(matrix) - 1][len(matrix[0]) - 1].getValue())
-    print s1
-    print x
-    print s2
+    if(x == 1 and y == 1 ):
+        dashes = ""
+        for i in range(len(s1)):
+            dashes += "|"
+        print "Score: " + str(matrix[len(matrix) - 1][len(matrix[0]) - 1].getValue())
+        print s1
+        print dashes
+        print s2
 
+    tb = currentItem.getTraceback()
+    if(tb[0] == 1):
+        #print "Diagonal"
+        s1 = matrix[0][y] + s1
+        s2 = matrix[x][0] + s2
+        traceback(matrix, x - 1, y - 1, s1, s2)
+    if(tb[1] == 1):
+        #print "Cima"
+        s1 = "-" + s1
+        s2 = matrix[x][0] + s2
+        traceback(matrix, x - 1, y, s1, s2)
+    if(tb[2] == 1):
+        #print "Esquerda"
+        s1 = matrix[0][y] + s1
+        s2 = "-" + s2
+        traceback(matrix, x, y - 1, s1, s2)
 
 matrix = initMatrix("WPCIWWPC", "IIWPC", -5)
 matrix = needlemanWunsch(matrix, MatrixInfo.blosum50, -5)
-traceback(matrix)
+traceback(matrix, len(matrix) - 1, len(matrix[0]) - 1, "", "")
 
-"""for line in range(len(matrix)):
-    print matrix[line]"""
+for line in range(len(matrix)):
+    print matrix[line]
