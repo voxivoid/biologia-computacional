@@ -1,0 +1,31 @@
+import sys
+from Bio import pairwise2
+from Bio.SubsMat import MatrixInfo as matlist
+
+matrix = matlist.blosum50
+gap_open = -5
+gap_extend = -5
+for a in pairwise2.align.globalds("WPCIWWPC", "IIWPC", matrix, gap_open, gap_extend):
+    print(pairwise2.format_alignment(*a))
+
+
+'''
+#existe um erro aqui
+def main(argv):
+
+    string1 = argv[1]
+    string2 = argv[2]
+    gap = argv[3]
+    scoringmatrix = argv[4]
+
+    if scoringmatrix == "blossum":
+        matrix = matlist.blosum50
+    else:
+        matrix = matlist.pam120
+
+    for a in pairwise2.align.globalds(string1, string2, matrix, gap, gap):
+        print(pairwise2.format_alignment(*a))
+
+if __name__ == "__main__":
+   main(sys.argv)
+'''
