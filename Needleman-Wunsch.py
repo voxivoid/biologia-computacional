@@ -1,6 +1,6 @@
 # coding=utf-8
 from Bio.SubsMat import MatrixInfo
-
+import time
 
 class Item:
     value = 0
@@ -128,9 +128,15 @@ def traceback(matrix, x, y, seq1, seq2):
         s2temp = "-" + s2
         traceback(matrix, x, y - 1, s1temp, s2temp)
 
+
+start = time.time()
+
 matrix = initMatrix("WPCIWWPC", "IIWPC", -5)
 matrix = needlemanWunsch(matrix, MatrixInfo.blosum50, -5)
 traceback(matrix, len(matrix) - 1, len(matrix[0]) - 1, "", "")
 
 for line in range(len(matrix)):
     print matrix[line]
+
+end = time.time()
+print end - start
