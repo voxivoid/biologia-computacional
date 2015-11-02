@@ -2,14 +2,16 @@
 from Bio.SubsMat import MatrixInfo
 import time
 
+
+
 class Item:
     value = 0
     #traceback[0] = diagonal, traceback[1] = up, traceback[2] = left
-    traceback = [0,0,0]
+    traceback = []
 
     def __init__(self, value):
         self.value = value
-        self.traceback = [0,0,0]
+        self.traceback = []
 
     def __repr__(self):
         return "V: " + str(self.value) + " Tb: " +str(self.traceback)
@@ -31,34 +33,44 @@ class Item:
         return self.traceback
 
 
-def initMatrix(s1, s2, gapValue):
-    # size of the strings + gap + string representation
-    matrix = [[0 for line in range(len(s1) + 2)] for column in range(len(s2) + 2)]
+#transition matrix
+transitionMatrix = [["", 1, 2, 3], [1, 0.6, 0.4, 0], [2, 0.25, 0.5, 0.25], [3, 0.25, 0.25, 0.5]]
+
+#emission matrix
+emissionMatrix = [["", "A", "T", "G", "C"], [1, 0.4, 0.3, 0.3, 0], [2, 0.1, 0.1, 0.4, 0.4], [3, 0.4, 0.3, 0, 0.3]]
+
+states = len(transitionMatrix[0]) - 1
+
+def initMatrix(seq):
+    # size of the strings + string representation || state number
+    matrix = [[0 for column in range(len(seq) + 1)] for line in range(states + 1)]
+
+    # inserting strings in the matrix
+    for column in range(len(seq)):
+        matrix[0][column + 1] = seq[column].upper()
+
+    for line in range(0, states):
+        matrix[line + 1][0] = transitionMatrix[line + 1][0]
 
     # initializing gap line and column
     for line in range(0, len(matrix) - 1):
-        item = Item(gapValue * line)
-        if (line > 0):
-            item.setTraceback([0,1,0])
+        item = Item(getEmissionValue(seq[0], line + 1) * (1/float(states)))
         matrix[line + 1][1] = item
 
-    for column in range(0, len(matrix[0]) - 1):
-        item = Item(gapValue * column)
-        if (column > 0):
-            item.setTraceback([0,0,1])
-        matrix[1][column + 1] = item
-
-    # inserting strings in the matrix
-    for column in range(0, len(s1)):
-        matrix[0][column + 2] = s1[column].upper()
-
-    for line in range(0, len(s2)):
-        matrix[line + 2][0] = s2[line].upper()
-
-    """for line in range(len(matrix)):
-        print matrix[line]"""
+    for line in range(len(matrix)):
+        print matrix[line]
 
     return matrix
+
+def getEmissionValue(char, state):
+    if(char == "A"):
+        return emissionMatrix[state][1]
+    elif(char == "T"):
+        return emissionMatrix[state][2]
+    elif(char == "G"):
+        return emissionMatrix[state][3]
+    elif(char == "C"):
+        return emissionMatrix[state][4]
 
 
 def needlemanWunsch(matrix, scoringMatrix, gapValue):
@@ -123,12 +135,11 @@ def traceback(matrix, x, y, seq1, seq2):
 
 start = time.time()
 
-matrix = initMatrix("WPCIWWPC", "IIWPC", -5)
-matrix = needlemanWunsch(matrix, MatrixInfo.blosum50, -5)
-traceback(matrix, len(matrix) - 1, len(matrix[0]) - 1, "", "")
+matrix = initMatrix("CATGCGGGTTATAAC")
+#traceback(matrix, len(matrix) - 1, len(matrix[0]) - 1, "", "")
 
-for line in range(len(matrix)):
-    print matrix[line]
+#for line in range(len(matrix)):
+ #   print matrix[line]
 
 end = time.time()
 print end - start
