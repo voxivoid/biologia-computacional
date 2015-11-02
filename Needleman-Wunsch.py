@@ -4,9 +4,8 @@ from Bio.SubsMat import MatrixInfo
 
 class Item:
     value = 0
-    # items on traceback are represented by tuples eg. item matrix[1][1] is represented by the tuple (1,1)
+    #traceback[0] = diagonal, traceback[1] = up, traceback[2] = left
     traceback = [0,0,0]
-    visited = False
 
     def __init__(self, value):
         self.value = value
@@ -65,13 +64,6 @@ def initMatrix(s1, s2, gapValue):
 def needlemanWunsch(matrix, scoringMatrix, gapValue):
     for line in range(2, len(matrix)):
         for column in range(2, len(matrix[0])):
-
-            """for l in range(len(matrix)):
-                print matrix[l]
-
-            print "Line: " + str(line) + " Column: " + str(column)
-            print "Score : " + str(scoringMatrix.get((matrix[0][column], matrix[line][0]))) + str(
-                matrix[0][column]) + "," + str(matrix[line][0])"""
             gapUp = matrix[line - 1][column].getValue() + gapValue
             gapLeft = matrix[line][column - 1].getValue() + gapValue
 
@@ -81,7 +73,7 @@ def needlemanWunsch(matrix, scoringMatrix, gapValue):
                 s = scoringMatrix.get((matrix[line][0], matrix[0][column]))
             match = matrix[line - 1][column - 1].getValue() + s
 
-            traceback = [0, 0, 0]
+            traceback = [0,0,0]
             value = max([gapUp, gapLeft, match])
 
             if (match == value):
