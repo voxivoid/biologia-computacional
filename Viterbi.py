@@ -57,9 +57,6 @@ def initMatrix(seq):
         item = Item(getEmissionValue(seq[0], line + 1) * (1/float(states)))
         matrix[line + 1][1] = item
 
-    for line in range(len(matrix)):
-        print matrix[line]
-
     return matrix
 
 def getEmissionValue(char, state):
@@ -73,30 +70,18 @@ def getEmissionValue(char, state):
         return emissionMatrix[state][4]
 
 
-def needlemanWunsch(matrix, scoringMatrix, gapValue):
-    for line in range(2, len(matrix)):
-        for column in range(2, len(matrix[0])):
-            gapUp = matrix[line - 1][column].getValue() + gapValue
-            gapLeft = matrix[line][column - 1].getValue() + gapValue
-
-            # this is made because the matrix doesn't have all the combinations eg. there's no (C,I) but there's (I,C)
-            s = scoringMatrix.get((matrix[0][column], matrix[line][0]))
-            if (s is None):
-                s = scoringMatrix.get((matrix[line][0], matrix[0][column]))
-            match = matrix[line - 1][column - 1].getValue() + s
-
-            traceback = [0,0,0]
-            value = max([gapUp, gapLeft, match])
-
-            if (match == value):
-                traceback[0] = 1
-
-            if (gapUp == value):
-                traceback[1] = 1
-
-            if (gapLeft == value):
-                traceback[2] = 1
-
+def viterbi(matrix):
+    for column in range(2, len(matrix[0])):
+        for line in range(1, len(matrix)):
+            values = []
+            traceback = []
+            for state in range(1, len(matrix)):
+                values.append(float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], matrix[state][0])))
+                traceback.append((state, column-1))
+            value = max(values)
+            for i in range(len(values)):
+                if (values[i] == value):
+                    traceback.append(traceback[i])
             matrix[line][column] = Item(value)
             matrix[line][column].setTraceback(traceback)
     return matrix
@@ -136,10 +121,11 @@ def traceback(matrix, x, y, seq1, seq2):
 start = time.time()
 
 matrix = initMatrix("CATGCGGGTTATAAC")
+viterbi(matrix)
 #traceback(matrix, len(matrix) - 1, len(matrix[0]) - 1, "", "")
 
-#for line in range(len(matrix)):
- #   print matrix[line]
+for line in range(len(matrix)):
+    print matrix[line]
 
 end = time.time()
 print end - start
