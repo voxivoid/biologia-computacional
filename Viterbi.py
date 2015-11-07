@@ -69,60 +69,52 @@ def getEmissionValue(char, state):
     elif(char == "C"):
         return emissionMatrix[state][4]
 
+def getTransitionValue(state1, state2):
+    return transitionMatrix[state1][state2]
+
 
 def viterbi(matrix):
     for column in range(2, len(matrix[0])):
         for line in range(1, len(matrix)):
-            values = []
             traceback = []
+            currentMaxValue = 0
             for state in range(1, len(matrix)):
-                values.append(float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], matrix[state][0])))
-                traceback.append((state, column-1))
-            value = max(values)
-            for i in range(len(values)):
-                if (values[i] == value):
-                    traceback.append(traceback[i])
-            matrix[line][column] = Item(value)
+                currentValue = float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], matrix[state][0]) * float(getTransitionValue(state, line)))
+                if(currentMaxValue == currentValue):
+                    traceback.append((state, column-1))
+                elif(currentMaxValue < currentValue):
+                    traceback = []
+                    currentMaxValue = currentValue
+                    traceback.append((state, column-1))
+            matrix[line][column] = Item(currentMaxValue)
             matrix[line][column].setTraceback(traceback)
     return matrix
 
-def traceback(matrix, x, y, seq1, seq2):
-    currentItem = matrix[x][y]
-    s1 = seq1
-    s2 = seq2
+def traceback(matrix, line, column, stateSeq):
+    currentItem = matrix[line][column]
+    sq = stateSeq
 
-    if(x == 1 and y == 1 ):
-        dashes = ""
-        for i in range(len(s1)):
-            dashes += "|"
-        print "Score: " + str(matrix[len(matrix) - 1][len(matrix[0]) - 1].getValue())
-        print s1
-        print dashes
-        print s2
-
+    if(column == 1):
+        print sq
     tb = currentItem.getTraceback()
-    if(tb[0] == 1):
-        #print "Diagonal"
-        s1temp = matrix[0][y] + s1
-        s2temp = matrix[x][0] + s2
-        traceback(matrix, x - 1, y - 1, s1temp, s2temp)
-    if(tb[1] == 1):
-        #print "Cima"
-        s1temp = "-" + s1
-        s2temp = matrix[x][0] + s2
-        traceback(matrix, x - 1, y, s1temp, s2temp)
-    if(tb[2] == 1):
-        #print "Esquerda"
-        s1temp = matrix[0][y] + s1
-        s2temp = "-" + s2
-        traceback(matrix, x, y - 1, s1temp, s2temp)
 
+    for coord in tb:
+        traceback(matrix, coord[0], coord[1], str(coord[0]) + sq)
 
 start = time.time()
 
 matrix = initMatrix("CATGCGGGTTATAAC")
 viterbi(matrix)
-#traceback(matrix, len(matrix) - 1, len(matrix[0]) - 1, "", "")
+maxValue = 0
+startTraceback = ()
+for i in range(1, len(matrix)):
+    if(maxValue <= matrix[i][len(matrix[0]) - 1].getValue()):
+        maxValue = matrix[i][len(matrix[0]) - 1].getValue()
+        startTraceback = (i, len(matrix[0]) - 1)
+
+print "Starttraceback: " + str(startTraceback)
+
+traceback(matrix, startTraceback[0], startTraceback[1], "")
 
 for line in range(len(matrix)):
     print matrix[line]
