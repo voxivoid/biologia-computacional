@@ -6,31 +6,18 @@ import time
 
 class Item:
     value = 0
-    #traceback[0] = diagonal, traceback[1] = up, traceback[2] = left
-    traceback = []
 
     def __init__(self, value):
         self.value = value
-        self.traceback = []
 
     def __repr__(self):
-        return "V: " + str(self.value) + " Tb: " +str(self.traceback)
-        #return str(self.value)
-
-    def addItemToTraceback(self, item):
-        self.traceback.append(item)
-
-    def setTraceback(self, traceback):
-        self.traceback = traceback
+        return "V: " + str(self.value)
 
     def setValue(self, value):
         self.value = value
 
     def getValue(self):
         return self.value
-
-    def getTraceback(self):
-        return self.traceback
 
 
 #transition matrix
@@ -74,55 +61,29 @@ def getTransitionValue(state1, state2):
     return transitionMatrix[state1][state2]
 
 
-def viterbi(matrix):
+def forward(matrix):
     for column in range(2, len(matrix[0])):
         for line in range(1, len(matrix)):
-            traceback = []
-            currentMaxValue = 0
+            currentValue = 0
             for state in range(1, len(matrix)):
-                currentValue = float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], line)) * float(getTransitionValue(state, line))
-                print(matrix[state][column-1].getValue())
-                print(getEmissionValue(matrix[0][column], line))
-                print(getTransitionValue(state, line))
-                if(currentMaxValue == currentValue):
-                    traceback.append((state, column-1))
-                elif(currentMaxValue < currentValue):
-                    traceback = []
-                    currentMaxValue = currentValue
-                    traceback.append((state, column-1))
-            matrix[line][column] = Item(currentMaxValue)
-            matrix[line][column].setTraceback(traceback)
+                currentValue += float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], line)) * float(getTransitionValue(state, line))
+            matrix[line][column] = Item(currentValue)
     return matrix
-
-def traceback(matrix, line, column, stateSeq):
-    currentItem = matrix[line][column]
-    sq = stateSeq
-
-    if(column == 1):
-        print sq
-    tb = currentItem.getTraceback()
-
-    for coord in tb:
-        traceback(matrix, coord[0], coord[1], str(coord[0]) + sq)
 
 start = time.time()
 
 #matrix = initMatrix("CATG")
 matrix = initMatrix("CATGCGGGTTATAAC")
-viterbi(matrix)
-maxValue = 0
-startTraceback = ()
+forward(matrix)
+
+forward = 0
 for i in range(1, len(matrix)):
-    if(maxValue <= matrix[i][len(matrix[0]) - 1].getValue()):
-        maxValue = matrix[i][len(matrix[0]) - 1].getValue()
-        startTraceback = (i, len(matrix[0]) - 1)
-
-print "Starttraceback: " + str(startTraceback)
-
-traceback(matrix, startTraceback[0], startTraceback[1], str(startTraceback[0]))
+    forward += matrix[i][len(matrix[0]) - 1].getValue()
+forward *= (1/float(states))
 
 for line in range(len(matrix)):
     print matrix[line]
+print forward
 
 end = time.time()
 print end - start
