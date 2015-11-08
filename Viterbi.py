@@ -37,7 +37,8 @@ class Item:
 transitionMatrix = [["", 1, 2, 3], [1, 0.6, 0.4, 0], [2, 0.25, 0.5, 0.25], [3, 0.25, 0.25, 0.5]]
 
 #emission matrix
-emissionMatrix = [["", "A", "T", "G", "C"], [1, 0.4, 0.3, 0.3, 0], [2, 0.1, 0.1, 0.4, 0.4], [3, 0.4, 0.3, 0, 0.3]]
+#emissionMatrix = [["", "A", "T", "G", "C"], [1, 0.4, 0.3, 0.3, 0], [2, 0.1, 0.1, 0.4, 0.4], [3, 0.4, 0.3, 0, 0.3]]
+emissionMatrix = [["", "A", "T", "G", "C"], [1, 0.4, 0.3, 0.3, 0], [2, 0.2, 0.2, 0.3, 0.3], [3, 0.5, 0, 0, 0.5]]
 
 states = len(transitionMatrix[0]) - 1
 
@@ -79,7 +80,10 @@ def viterbi(matrix):
             traceback = []
             currentMaxValue = 0
             for state in range(1, len(matrix)):
-                currentValue = float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], matrix[state][0]) * float(getTransitionValue(state, line)))
+                currentValue = float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], line)) * float(getTransitionValue(state, line))
+                print(matrix[state][column-1].getValue())
+                print(getEmissionValue(matrix[0][column], line))
+                print(getTransitionValue(state, line))
                 if(currentMaxValue == currentValue):
                     traceback.append((state, column-1))
                 elif(currentMaxValue < currentValue):
@@ -103,7 +107,8 @@ def traceback(matrix, line, column, stateSeq):
 
 start = time.time()
 
-matrix = initMatrix("CATGCGGGTTATAAC")
+matrix = initMatrix("CATG")
+#matrix = initMatrix("CATGCGGGTTATAAC")
 viterbi(matrix)
 maxValue = 0
 startTraceback = ()
@@ -114,7 +119,7 @@ for i in range(1, len(matrix)):
 
 print "Starttraceback: " + str(startTraceback)
 
-traceback(matrix, startTraceback[0], startTraceback[1], "")
+traceback(matrix, startTraceback[0], startTraceback[1], str(startTraceback[0]))
 
 for line in range(len(matrix)):
     print matrix[line]
