@@ -81,9 +81,6 @@ def viterbi(matrix):
             currentMaxValue = 0
             for state in range(1, len(matrix)):
                 currentValue = float(matrix[state][column-1].getValue()) * float(getEmissionValue(matrix[0][column], line)) * float(getTransitionValue(state, line))
-                print(matrix[state][column-1].getValue())
-                print(getEmissionValue(matrix[0][column], line))
-                print(getTransitionValue(state, line))
                 if(currentMaxValue == currentValue):
                     traceback.append((state, column-1))
                 elif(currentMaxValue < currentValue):
