@@ -56,9 +56,9 @@ def simulator(fastaDirInput, nGen, mr, rr, rfl):
         for i in range(len(sequencesOutput)):
             for j in range(i+1, len(sequencesOutput)):
                 h = float(hammingDistance(sequencesOutput[i], sequencesOutput[j]))
-                hdTemp += h
+                hdTemp += float(h)
                 if (h < 0.75):
-                    jcTemp += jukesCantor(hdTemp)
+                    jcTemp += jukesCantor(h)
                 x += 1
         hdTemp /= float(x)
         jcTemp /= float(x)
@@ -66,12 +66,16 @@ def simulator(fastaDirInput, nGen, mr, rr, rfl):
         jc.append(jcTemp)
     print hd
     print jc
+    f = open("q1_output", "w")
+    for i in range(len(hd)):
+        f.write(str(i) + " " + str(hd[i]) + " " + str(jc[i]) + "\n")
+    f.close()
 
 def hammingDistance(s1, s2):
-    return sum(bool(ord(ch1) - ord(ch2)) for ch1, ch2 in zip(s1, s2))
+    return (sum(bool(ord(ch1) - ord(ch2)) for ch1, ch2 in zip(s1, s2)))/float(len(s1))
 
 def jukesCantor(p):
-    return (-3/4) * math.log1p(1 - (4/3) * p)
+    return (-3/float(4)) * math.log(float(1) - ((4/float(3)) * float(p)))
 
 def randomSequence(size):
     dna = ""
