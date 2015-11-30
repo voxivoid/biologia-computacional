@@ -66,7 +66,7 @@ def simulator(fastaDirInput, nGen, mr, rr, rfl):
         jc.append(jcTemp)
     print hd
     print jc
-    f = open("q1_output", "w")
+    f = open("q1_output.txt", "w")
     for i in range(len(hd)):
         f.write(str(i) + " " + str(hd[i]) + " " + str(jc[i]) + "\n")
     f.close()
