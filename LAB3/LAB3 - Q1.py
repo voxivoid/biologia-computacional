@@ -94,7 +94,7 @@ def q1():
     fastaDirInput = u".\\q1.fasta"
     initialRandomFasta(fastaDirInput, 100, 100)
 
-    simulator(fastaDirInput, 1000, 0.1, 0, 0)
+    simulator(fastaDirInput, 5000, 0.1, 0, 0)
 
 def saveRecordsFasta(sequences, fastaOutputDir):
     records = []
