@@ -98,13 +98,5 @@ def q1():
 
     simulator(fastaDirInput, 5000, 0.1, 0, 0)
 
-def saveRecordsFasta(sequences, fastaOutputDir):
-    records = []
-    for i in range(1,3):
-        for j in range(len(sequences)/2):
-            records.append(SeqRecord(Seq(sequences[j]), "seq" + str(i-1) + "_" + str(j), "", "", [], [], {}, {}))
-    SeqIO.write(records, fastaOutputDir, "fasta")
-
-
 q1()
 #simulator(u".\\fasta", "", 3, 1, 1, 4)
