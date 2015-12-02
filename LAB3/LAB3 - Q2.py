@@ -91,9 +91,9 @@ def saveRecordsFasta(initialRecords, sequences, fastaOutputDir):
     records = []
     for rec in initialRecords:
         records.append(rec)
-    for i in range(1,3):
+    for i in range(2):
         for j in range(len(sequences)/2):
-            records.append(SeqRecord(Seq(sequences[j + (i-1) * len(sequences)/2]), "seq" + str(i-1) + "_" + str(j), "", "", [], [], {}, {}))
+            records.append(SeqRecord(Seq(sequences[j + i * len(sequences)/2]), "seq" + str(i) + "_" + str(j), "", "", [], [], {}, {}))
     SeqIO.write(records, fastaOutputDir, "fasta")
 
 
