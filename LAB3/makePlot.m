@@ -15,7 +15,7 @@ y2 = A(:,3);
 figure; hold on
 a1 = plot(x,y1); M1 = '% of mismatching sites/Hamming distance';
 a2 = plot(x,y2); M2 = 'Jukes-Cantor model                     ';
-legend([a1; a2], [M1; M2]);
+legend([a1; a2], [M1; M2], 'Location','southoutside','Orientation','horizontal' );
 
 title('Sequence Identity Plot')
 xlabel('# generations')
