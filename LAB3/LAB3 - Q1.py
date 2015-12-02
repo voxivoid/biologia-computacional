@@ -51,6 +51,7 @@ def simulator(fastaDirInput, nGen, mr, rr, rfl):
             sequencesOutput.append("".join(seq))
 
         x = 0
+        y = 0
         hdTemp = 0
         jcTemp = 0
         for i in range(len(sequencesOutput)):
@@ -59,9 +60,10 @@ def simulator(fastaDirInput, nGen, mr, rr, rfl):
                 hdTemp += float(h)
                 if (h < 0.75):
                     jcTemp += jukesCantor(h)
+                    y += 1
                 x += 1
         hdTemp /= float(x)
-        jcTemp /= float(x)
+        jcTemp /= float(y)
         hd.append(hdTemp)
         jc.append(jcTemp)
     print hd
